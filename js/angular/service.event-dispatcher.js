@@ -1,6 +1,8 @@
 angular.module('application')
 .service('EventDispatcher', ['$rootScope', function($rootScope){
-	this.events = [];
+	this.events = [
+		{receive: 'child.broadcast.event', broadcast: 'core.broadcast.event'}
+	];
 	this.registered = false;
 
 	/**
