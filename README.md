@@ -11,3 +11,4 @@ This repository contains a number of PHP and Javascript files for things that I 
 ### Javascript
 
 * jpSlider: This is an AngularJS directive that slides an element in or out of view based on a boolean variable in the parent scope. (/angular/directive.slider.js)
+* EventDispatcher: This is an AngularJS service that dispatches events and messages via Angular's built-in $broadcast, $emit, and $on functions. (/angular/service.event-dispatcher.js)
