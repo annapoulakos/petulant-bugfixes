@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signal Processor Demo - jimpoulakos.com</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+</head>
+<body ng-app="signal.processor.test.application" ng-controller="signal.processor.test.controller">
+
+    <div class="container">
+        <h1>Signal Processor Demo</h1>
+        <p class="lead">This script documents what this service does and how to use it. The SignalProcessor service allows a controller to hook into the built-in AngularJS broadcast/emit/on subsystem with a minimum of fuss.</p>
+        <p>This demo will use a pair of controllers to demonstrate passing information between two controllers. Additionally, we will use the main controller (signal.processor.test.controller) to receive information from all sub-controllers.</p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <fieldset>
+                    <legend>Main Controller Log</legend>
+
+                    <button class="btn btn-info" ng-click="logger.list_all()">List All Registered Callbacks</button>
+
+                    <ul class="list-unstyled">
+                        <li ng-repeat="elm in logger.elements">
+                            <i class="fa" ng-class="elm.icon">{{elm.message}}</i>
+                        </li>
+                    </ul>
+                </fieldset>
+            </div>
+            <div class="col-md-4" ng-controller="subcontroller1">
+                <fieldset>
+                    <legend>Controller Log</legend>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <input type="text" class="form-control" ng-model="main.message">
+                    </div>
+                    <button class="btn btn-success" ng-click="main.add_message()">Send Message</button>
+
+                    <ul class="list-unstyled">
+                        <li ng-repeat="elm in main.elements" ng-class="elm.color">
+                            <i class="fa" ng-class="elm.icon">{{elm.message}}</i>
+                        </li>
+                    </ul>
+                </fieldset>
+            </div>
+            <div class="col-md-4" ng-controller="subcontroller2">
+                <fieldset>
+                    <legend>Controller Log</legend>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <input type="text" class="form-control" ng-model="main.message">
+                    </div>
+                    <button class="btn btn-success" ng-click="main.add_message()">Send Message</button>
+
+                    <ul class="list-unstyled">
+                        <li ng-repeat="elm in main.elements">
+                            <i class="fa" ng-class="elm.icon">{{elm.message}}</i>
+                        </li>
+                    </ul>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        ;angular.module('pbUtilities', [])
+        .factory('SignalProcessor', ['$rootScope', function($rootScope){
+            var SignalProcessorService = {
+                register: function(signal_name, signal_callback){
+                    $rootScope.$on(signal_name, function(event, params){
+                        signal_callback(params);
+                    });
+
+                    this.store_info(signal_name, signal_callback);
+                }
+                , registry: []
+                , store_info: function(signal_name, signal_callback){
+                    this.registry.push({name: signal_name, callback: signal_callback});
+                }
+                , log_all: function(){
+                    console.table(this.registry);
+                }
+            };
+
+            return SignalProcessorService;
+        }])
+
+        ;angular.module('signal.processor.test.application', ['pbUtilities'])
+        .controller('signal.processor.test.controller', ['$scope', 'SignalProcessor', function($scope, SignalProcessor){
+            $scope.logger = {
+                elements: []
+                , add_message: function(params){
+                    $scope.logger.elements.push({icon: params.icon, message: params.message});
+                }
+                , list_all: function(){
+                    SignalProcessor.log_all();
+                }
+            }
+            SignalProcessor.register('main_log', $scope.logger.add_message);
+        }])
+
+        .controller('subcontroller1', ['$scope', 'SignalProcessor', function($scope, SignalProcessor){
+            $scope.main = {
+                elements: []
+                , message: ''
+                , icon: 'fa-check-square'
+                , add_message: function(){
+                    $scope.$emit('main_log', {icon:this.icon, message:this.message});
+                    $scope.$emit('second_log', {icon:this.icon, message:this.message});
+                    this.message = '';
+                }
+                , receive_message: function(params){
+                    $scope.main.elements.push({icon: params.icon, message: params.message, color: params.color});
+                }
+            };
+
+            SignalProcessor.register('first_log', $scope.main.receive_message);
+        }])
+
+        .controller('subcontroller2', ['$scope', 'SignalProcessor', function($scope, SignalProcessor){
+            $scope.main = {
+                elements: []
+                , message: ''
+                , icon: 'fa-shield'
+                , add_message: function(){
+                    $scope.$emit('main_log', {icon:this.icon, message:this.message});
+                    $scope.$emit('first_log', {icon:this.icon, message:this.message, color: 'text-danger'});
+                    this.message = '';
+                }
+                , receive_message: function(params){
+                    $scope.main.elements.push({icon: params.icon, message: params.message});
+                }
+            };
+
+            SignalProcessor.register('second_log', $scope.main.receive_message);
+        }])
+    </script>
+</body>
+</html>
