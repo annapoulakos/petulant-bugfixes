@@ -8,8 +8,10 @@ I needed a quick and easy scroll utility that I could put on any page without ha
 
 Include [this file](./jquery-to-top.js) in your project after you have loaded jQuery.
 Add this code at some point in the <body> tag, preferably near the end.
-    
+
+```javascript
     $('#toTopLink').toTopScroll();
+```
     
 You will additionally need to add a link or button with an id of toTopLink in order to call it this way.
 
@@ -22,8 +24,9 @@ You can include three options for this plugin as an object passed to the toTopSc
 * _fade_time_: This option determines the time, in milliseconds, the to top link takes to fade in or out. The default is 1000.
 
 You can see the code here for customizing the options:
-
+```javascript
     var options = { min_height: 300, scroll_speed: 2, fade_time: 500 };
     $('#toTopLink').toTopScroll(options);
+```
     
     
