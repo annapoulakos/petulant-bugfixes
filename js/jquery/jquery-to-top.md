@@ -21,6 +21,7 @@ You can include three options for this plugin as an object passed to the toTopSc
 * _scroll_speed_: This option affects the speed at which the page scrolls. Larger numbers increase speed, while lower numbers slow the animation down. The default value is 3. Setting this value to 0 breaks the plugin. Just an FYI.
 * _fade_time_: This option determines the time, in milliseconds, the to top link takes to fade in or out. The default is 1000.
 
+
     var options = { min_height: 300, scroll_speed: 2, fade_time: 500 };
     $('#toTopLink').toTopScroll(options);
     
