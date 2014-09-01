@@ -7,7 +7,7 @@ I needed a quick and easy scroll utility that I could put on any page without ha
 ## Instructions
 
 Include [this file](./jquery-to-top.js) in your project after you have loaded jQuery.
-Add this code at some point in the <body> tag, preferably near the end.
+Add this code at some point in the body tag, preferably near the end.
 
 ```javascript
     $('#toTopLink').toTopScroll();
