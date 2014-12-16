@@ -30,7 +30,7 @@ class Container {
 
 class Factory {
     protected static $rules = array();
-    public static function Rule ($rule, $value) {
+    public static function Rule ($rule, $value = null) {
         if (!isset(self::$rules[$rule])) {
             self::$rules[$rule] = new Rule($value);
         }
@@ -42,25 +42,13 @@ class Factory {
 class Rule extends Container {
     public function __construct ($value) {
         $this->value = $value;
-    }
 
-    public function equals ($value) {
-        return $this->value == $value;
-    }
-    public function not_equal ($value) {
-        return $this->value != $value;
-    }
-    public function is_null () {
-        return is_null($this->value);
-    }
-    public function not_null () {
-        return !is_null($this->value);
-    }
-    public function greater_than ($value) {
-        return $this->value > $value;
-    }
-    public function less_than ($value) {
-        return $this->value < $value;
+        $this->condition = function ($c) {
+            return false;
+        };
+        $this->then = function ($c) {
+            // Add default logging here?
+        };
     }
 
     public function execute () {
